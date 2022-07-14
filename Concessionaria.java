@@ -4,196 +4,245 @@ package ProjetoTrilha;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class Concessionaria {
-
-    public static void main(String[] args) {
-        //scanner para coletar numeros
-        Scanner entrada = new Scanner(System.in);
-        //scanner para coletar strings
-        Scanner entradaString = new Scanner(System.in);
-
-        //arraylist usado no código
-        ArrayList<Marcas> marcas = new ArrayList();
-        ArrayList<Funcionario> funcionarios = new ArrayList();
-        ArrayList<Cliente> clientes = new ArrayList();
-
-        /*instanciando um cliente e um funcionario que
-        *servirão de auxiliar para as operações*/
-        Funcionario operador = new Funcionario();
-        Cliente aux = new Cliente();
-
-        //preenchendo o arraylist de marcas
-        Marcas fiat = new Marcas("Fiat", "Punto", "cinza", "nacional", 25499.00, 2011);
-        Marcas chevrolet = new Marcas("Chevrolet", "Cruze", "preta", "nacional", 124595, 2022);
-        Marcas porsche = new Marcas("Porsche", "Spyder", "branca", "internacional", 4124591, 2013);
-        Marcas nissan = new Marcas("Nissan", "GTR", "laranja", "internacional", 769109, 2017);
-        Marcas volkswagen = new Marcas("Volkswagen", "Jetta", "vermelha", "nacional", 144991, 2020);
-        Marcas hyundai = new Marcas("Hyundai", "Hb20", "branca", "nacional", 59291, 2020);
-        Marcas bmw = new Marcas("BMW", "Serie1", "azul", "internacional", 259951, 2022);
-        Marcas audi = new Marcas("Audi", "A3", "azul", "internacional", 153991, 2021);
-        Marcas lamborghini = new Marcas("Lamborghini", "Aventador Roadster", "cinza", "internacional", 3224591, 2020);
-        Marcas mercedes = new Marcas("Mercedes-Benz", "Classe A", "prata", "internacional", 190951, 2019);
-
-        //adicionando os objetos ao array de marcas
-        marcas.add(fiat);
-        marcas.add(chevrolet);
-        marcas.add(porsche);
-        marcas.add(nissan);
-        marcas.add(volkswagen);
-        marcas.add(hyundai);
-        marcas.add(bmw);
-        marcas.add(audi);
-        marcas.add(mercedes);
-        marcas.add(lamborghini);
-
-        //variáveis usadas no código
-        int menu;
-        int menuCliente;
-        int menuFuncionario;
-        int Exit = 1;
-        int exitCliente = 1;
-        int exitFuncionario = 1;
-
-        do {
-            exibirMenu();
-            menu = entrada.nextInt();
-            switch (menu) {
-                case 1:
-                    for (Marcas marca : marcas) {
-                        marca.imprimirModelos();
-                    }
-                    System.out.println("");
-                    break;
-                case 2:
-                    exitCliente = 1;
-                    while (exitCliente != 0) {
-                        exibirMenuCliente();
-                        menuCliente = entrada.nextInt();
-                        switch (menuCliente) {
-                            case 1:
-                                Cliente novoCliente = (Cliente) aux.adicionarCliente(clientes);
-                                clientes.add(novoCliente);
-                                break;
-                            case 2:
-                                for (Cliente cliente : clientes) {
-                                    cliente.imprimirInformacoes();
-                                }
-                                break;
-                            case 3:
-                                aux.alterarInformacoesCliente(clientes);
-                                break;
-                            case 4:
-                                aux.buscarModelo(marcas);
-                                break;
-                            case 5:
-                                aux.buscar(clientes);
-                                break;
-                            case 6:
-                                aux.adicionarSaldo(clientes);
-                                break;
-                            case 7:
-                                System.out.println("Retornando ao menu anterior...");
-                                exitCliente--;
-                                break;
-                            default:
-                                System.out.println("Opção Inválida! Tente outra");
-                                break;
-                        }
-                    }
-                    break;
-                case 3:
-                    exitFuncionario = 1;
-                    while (exitFuncionario != 0) {
-                        exibirMenuFuncionario();
-                        menuFuncionario = entrada.nextInt();
-                        switch (menuFuncionario) {
-                            case 1:
-                                Funcionario novoFuncionario = (Funcionario) operador.adicionarFuncionario(funcionarios);
-                                funcionarios.add(novoFuncionario);
-                                break;
-                            case 2:
-                                operador.alterarInformacoesFuncionario(funcionarios);
-                                break;
-                            case 3:
-                                for (Funcionario funcionario : funcionarios) {
-                                    funcionario.imprimirInformacoes();
-                                }
-                                break;
-                            case 4:
-                                operador.buscar(funcionarios);
-                                break;
-                            case 5:
-                                operador.demitir(funcionarios);
-                                break;
-                            case 6:
-                                System.out.println("Retornando ao menu anterior...");
-                                exitFuncionario--;
-                                break;
-                            default:
-                                System.out.println("Opção Inválida! Tente outra");
-                                break;
-                        }
-                    }
-                    break;
-                case 4:
-                    aux.testDrive(marcas);
-                    break;
-                case 5:
-                    aux.comprar(clientes, marcas, funcionarios);
-                    break;
-                case 6:
-                    System.out.println("\nSaindo do programa...");
-                    Exit--;
-                    break;
-                default:
-                    System.out.println("Opção Inválida! Tente outra");
-                    break;
+public class Concessionaria implements sistemaConcessionaria{
+    //scanner para coletar numeros
+    Scanner entrada = new Scanner(System.in);
+    //scanner para coletar strings
+    Scanner entradaString = new Scanner(System.in);
+    
+    /*método utilizado para que o cliente
+    possa realizar a compra de algum veiculo*/
+    @Override
+    public void comprar(ArrayList<Cliente>clientes, ArrayList<Marcas>marcas, ArrayList<Funcionario>funcionarios){
+        //variáveis auxiliares do método
+        Marcas comprado = null;
+        Cliente comprador = null;
+        Funcionario vendedor = null;
+        
+        //variáveis booleanas usadas no método
+        boolean achouVendedor = false;
+        boolean achouCliente = false;
+        boolean achouModelo = false;
+        
+        System.out.println("===========COMPRAR=========");
+        System.out.println("Informe o nome do funcionário: ");
+        String funcionarioVendedor = entradaString.nextLine();
+        for(int k = 0; k < funcionarios.size(); k++){
+            vendedor = funcionarios.get(k);
+            if(funcionarioVendedor.equals(vendedor.getNome())){
+                achouVendedor = true;
             }
-        } while (Exit != 0);
+            break;
+        }
+        if(achouVendedor == true){
+            System.out.println("Informe o nome do cliente: ");
+            String clienteComprador = entradaString.nextLine();
+            for(int i = 0; i < clientes.size(); i++){
+                comprador = clientes.get(i);
+                if(clienteComprador.equals(comprador.getNome())){
+                    achouCliente = true;
+                }
+                break;
+            }
+            if(achouCliente == true){
+                System.out.println("Informe o modelo da compra: ");
+                String modeloComprado = entradaString.nextLine();
+                for(int j = 0; j < marcas.size(); j++){
+                    comprado = marcas.get(j);
+                    if(modeloComprado.equalsIgnoreCase(comprado.getNome())){
+                        achouModelo = true;
+                        if(comprador.saldoCliente >= comprado.getValorVenda()){
+                            comprador.saldoCliente = (comprador.saldoCliente - comprado.getValorVenda());
+                            vendedor.salario = vendedor.salario + (comprado.getValorVenda() * vendedor.COMISSAO_VENDEDOR);
+                            System.out.println("Compra realizada com sucesso!\n");
+                            System.out.println("Comprador: " + comprador.getNome());
+                            System.out.println("Vendedor: " + vendedor.getNome());
+                            System.out.println("Modelo Comprado: " + comprado.getNome() + " " + comprado.getModelo() + " " + comprado.getAnoFabricacao());
+                        }
+                        else{
+                            System.out.println("Saldo insuficiente! Compra não realizada \n");
+                            break;
+                        }
+                    }
+                }
+                if(!achouModelo){
+                    System.out.println("Modelo não existente! Compra não realizada\n");
+                }
+            }
+            else{
+                System.out.println("Cliente não existente! Compra não realizada\n");
+            }
+        }
+        else{
+            System.out.println("Funcionário não existente! Compra não realizada\n");
+        }
     }
-
-    /*método para exibir um menu com opçoes
-     *para execução da classe principal*/
-    static void exibirMenu() {
-        System.out.println("============ Concessionaria ============");
-        System.out.println("====|1| Modelos");
-        System.out.println("====|2| Clientes");
-        System.out.println("====|3| Funcionários");
-        System.out.println("====|4| Testdrive");
-        System.out.println("====|5| Comprar");
-        System.out.println("====|6| Sair");
-        System.out.println("========================================");
-        System.out.print("Escolha uma opção: ");
+    
+    
+    /*método utilizado para que o cliente
+    possa realizar um testeDrive em algum veiculo*/
+    @Override
+    public void testDrive(ArrayList<Marcas>marcas){
+        boolean encontrado = false;
+        System.out.println("==========TESTDRIVE===========");
+        System.out.println("Informe o nome do cliente: ");
+        String nomeCliente = entradaString.nextLine();
+        System.out.println("Informe o modelo para testdrive: ");
+        String nomeModelo = entradaString.nextLine();
+        for(int i = 0; i < marcas.size(); i++){
+            Marcas temporario = marcas.get(i);
+            if(nomeModelo.equalsIgnoreCase(temporario.getNome())){
+                System.out.println("O cliente " + nomeCliente + " esta fazendo testDrive no modelo " + temporario.getNome() + "\n");
+                encontrado = true;
+            }
+        }
+        if(!encontrado){
+            System.out.println("Não existe esse modelo \n");
+        }
     }
-
-    /*método para exibir um menu com opções
-    *para execução da classe cliente*/
-    static void exibirMenuCliente() {
-        System.out.println("============ MENU CLIENTE ============");
-        System.out.println("====|1| Adicionar Cliente");
-        System.out.println("====|2| Imprimir Informações");
-        System.out.println("====|3| Alterar Informações");
-        System.out.println("====|4| Buscar Modelo");
-        System.out.println("====|5| Buscar Cliente");
-        System.out.println("====|6| Adicionar Saldo");
-        System.out.println("====|7| Menu Anterior");
-        System.out.println("========================================");
-        System.out.print("Escolha uma opção: ");
-        System.out.println("");
+    
+    
+    /*método utilizado para buscar algum cliente pelo nome*/
+    @Override
+    public void buscar(ArrayList<Cliente>clientes){
+        boolean achou = false;
+        System.out.println("Informe o nome do cliente que deseja verificar: ");
+        String nome_busca = entradaString.nextLine();
+        for(int i = 0; i < clientes.size(); i++){
+            Cliente temp = clientes.get(i);
+            if(nome_busca.equals(temp.getNome())){
+                System.out.println("Cliente encontrado!");
+                temp.imprimirInformacoes();
+                achou = true;
+            }
+        }
+        if(!achou){
+            System.out.println("Não existe cliente com esse nome");
+        }
     }
-
-    /*método para exibir um menu com opções
-    *para execução da classe funcionário*/
-    static void exibirMenuFuncionario() {
-        System.out.println("============ MENU FUNCIONÁRIO ============");
-        System.out.println("====|1| Adicionar Funcionário");
-        System.out.println("====|2| Alterar Informações");
-        System.out.println("====|3| Imprimir Funcionários");
-        System.out.println("====|4| Buscar Funcionário");
-        System.out.println("====|5| Demitir Funcionário");
-        System.out.println("====|6| Menu Anterior");
-        System.out.println("========================================");
-        System.out.print("Escolha uma opção: ");
-        System.out.println("");
+    
+    
+    /*método utilizado para realizar a adição
+    de um novo cliente*/
+    @Override
+    public Cliente adicionarCliente(ArrayList<Cliente>clientes){
+        //capturando informações do cliente
+        System.out.println("====== ADICIONAR CLIENTE =======");
+        System.out.println("Informe o nome: ");
+        String nome_cliente = entradaString.nextLine();
+        System.out.println("Informe o CPF: ");
+        String cpf_cliente = entradaString.nextLine();
+        System.out.println("Informe o sexo: ");
+        char sexo_cliente = entradaString.next().charAt(0);
+        entradaString.nextLine();
+        System.out.println("Informe a idade: ");
+        int idade_cliente = entrada.nextInt();
+        System.out.println("Informe o saldo: ");
+        double saldo_cliente = entrada.nextDouble();
+        
+        //instanciando um novo cliente
+        Cliente e = new Cliente();
+        
+        //setando as informações do cliente
+        e.setNome(nome_cliente);
+        e.setCpf(cpf_cliente);
+        e.setSexo(sexo_cliente);
+        e.setIdade(idade_cliente);
+        e.setSaldoCliente(saldo_cliente);
+        
+        //adicionando o novo cliente no arraylist de clientes
+        return e;
+    }
+    
+    
+    /*método utilizado para realizar
+    uma busca por algum modelo específico*/
+    @Override
+    public void buscarModelo(ArrayList<Marcas>marcas){
+        boolean achou = false;
+        Marcas temp = null;
+        System.out.println("Informe o modelo que deseja pesquisar: ");
+        String nome_modelo = entradaString.nextLine();
+        for(int i = 0; i < marcas.size(); i++){
+            temp = marcas.get(i);
+            if(nome_modelo.equalsIgnoreCase(temp.getNome())){
+                achou = true;
+                break;
+            }
+        }
+        if(achou){
+            temp.imprimirModelos();
+        }
+        else{
+            System.out.println("Modelo não encontrado");
+        }
+    }
+    
+    
+    /*método utilizado para despedir um 
+    funcionário que desejar*/
+    @Override
+    public void demitir(ArrayList<Funcionario>funcionarios){
+        System.out.println("==== DEMITIR FUNCIONÁRIO =====");
+        for(int i = 0; i < funcionarios.size(); i++){
+            Funcionario temp = funcionarios.get(i);
+            System.out.println("[" + i + "]" + temp.getNome());
+        }
+        System.out.println("Informe um numero referente ao nome: ");
+        int demitido = entrada.nextInt();
+        
+        funcionarios.remove(demitido);
+        System.out.println("Funcionário demitido!");
+    }
+    
+    
+    /*método utilizado para buscar algum funcionário pelo nome*/
+    @Override
+    public void buscarFuncionario(ArrayList<Funcionario>funcionarios){
+        boolean achou = false;
+        System.out.println("Informe o nome do funcionário que deseja verificar: ");
+        String nome_busca = entradaString.nextLine();
+        for(int i = 0; i < funcionarios.size(); i++){
+            Funcionario temp = funcionarios.get(i);
+            if(nome_busca.equals(temp.getNome())){
+                System.out.println("Funcionário encontrado!");
+                temp.imprimirInformacoes();
+                achou = true;
+                break;
+            }
+        }
+        if(!achou){
+            System.out.println("Não existe funcionário com esse nome");
+        }
+    }
+    
+    
+    /*método utilizado para adicionar
+    novos funcionarios ao arraylist funcionários*/
+    @Override
+    public Funcionario adicionarFuncionario(ArrayList<Funcionario>funcionarios){
+        //capturando informações do funcionário
+        System.out.println("====== ADICIONAR FUNCIONÁRIO =======");
+        System.out.println("Informe o nome: ");
+        String nome_funcionario = entradaString.nextLine();
+        System.out.println("Informe o CPF: ");
+        String cpf_funcionario = entradaString.nextLine();
+        System.out.println("Informe o sexo: ");
+        char sexo_funcionario = entradaString.next().charAt(0);
+        entradaString.nextLine();
+        System.out.println("Informe o salário: ");
+        double salario_funcionario = entrada.nextDouble();
+        
+        //instanciando um novo funcionario
+        Funcionario e = new Funcionario();
+        
+        //setando as informações do funcionario
+        e.setNome(nome_funcionario);
+        e.setCpf(cpf_funcionario);
+        e.setSexo(sexo_funcionario);
+        e.setSalario(salario_funcionario);
+        
+        //adicionando o novo funcionario no arraylist de funcionarios
+        return e;
     }
 }

@@ -19,22 +19,6 @@ public final class Funcionario extends Pessoa {
     Scanner entradaNumeros = new Scanner(System.in);
     Scanner entradaStrings = new Scanner(System.in);
 
-    //métodos da classe funcionario
-    /*método utilizado para despedir um 
-    *funcionário que desejar*/
-    public void demitir(ArrayList<Funcionario> funcionarios) {
-        System.out.println("==== DEMITIR FUNCIONÁRIO =====");
-        for (int i = 0; i < funcionarios.size(); i++) {
-            Funcionario temp = funcionarios.get(i);
-            System.out.println("[" + i + "]" + temp.getNome());
-        }
-        System.out.print("Informe o numero referente ao nome: ");
-        int demitido = entradaNumeros.nextInt();
-
-        funcionarios.remove(demitido);
-        System.out.println("Funcionário demitido!");
-    }
-
     //construtor vazio
     public Funcionario() {
     }
@@ -57,27 +41,7 @@ public final class Funcionario extends Pessoa {
         this.salario = salario;
     }
 
-    //método usado para buscar algum funcionário pelo nome
-    public void buscar(ArrayList<Funcionario> funcionarios) {
-        boolean achou = false;
-        System.out.println("Informe o nome do funcionário que deseja verificar: ");
-        String nome_busca = entradaStrings.nextLine();
-        for (int i = 0; i < funcionarios.size(); i++) {
-            Funcionario temp = funcionarios.get(i);
-            if (nome_busca.equals(temp.getNome())) {
-                System.out.println("Funcionário encontrado!");
-                temp.imprimirInformacoes();
-                achou = true;
-                break;
-            }
-        }
-        if (!achou) {
-            System.out.println("Não existe funcionário com esse nome");
-        }
-    }
-
-    /*método herdado da classe pessoa que será
-    *utilizado para alterar informações do funcionário*/
+    /*método utilizado para alterar informações do funcionário*/
     public void alterarInformacoesFuncionario(ArrayList<Funcionario> funcionarios) {
         /*variáveis criadas para fazer 
         *as alterações das informações de funcionário*/
@@ -118,8 +82,7 @@ public final class Funcionario extends Pessoa {
         System.out.println("Funcionário atualizado com sucesso!");
     }
 
-    /*método herdado da classe pessoa que será
-    *utilizado para imprimir as informações do funcionário*/
+    /*método utilizado para imprimir as informações do funcionário*/
     @Override
     public void imprimirInformacoes() {
         System.out.println("======= INFORMAÇÕES FUNCIONÁRIO =======");
@@ -129,33 +92,5 @@ public final class Funcionario extends Pessoa {
         System.out.println("\tSALÁRIO: " + getSalario());
         System.out.println("==================================");
         System.out.println("");
-    }
-
-    /*método herdado da classe pessoa que será
-    *utilizado para adicionar funcionarios ao arraylist funcionários*/
-    public Funcionario adicionarFuncionario(ArrayList<Funcionario> funcionarios) {
-        //capturando informações do funcionário
-        System.out.println("====== ADICIONAR FUNCIONÁRIO =======");
-        System.out.println("Informe o Nome: ");
-        String nome_funcionario = entradaStrings.nextLine();
-        System.out.println("Informe o CPF: ");
-        String cpf_funcionario = entradaStrings.nextLine();
-        System.out.println("Informe o Sexo: ");
-        char sexo_funcionario = entradaStrings.next().charAt(0);
-        entradaStrings.nextLine();
-        System.out.println("Informe o Salário: ");
-        double salario_funcionario = entradaNumeros.nextDouble();
-
-        //instanciando um novo funcionário
-        Funcionario e = new Funcionario();
-
-        //setando as informações do funcionário
-        e.setNome(nome_funcionario);
-        e.setCpf(cpf_funcionario);
-        e.setSexo(sexo_funcionario);
-        e.setSalario(salario_funcionario);
-
-        //adicionando o novo funcionário ao arraylist
-        return e;
     }
 }
